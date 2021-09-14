@@ -1,42 +1,192 @@
 import { useEffect, useState } from 'react';
 import './App.css';
-import db from './firebase';
+import db, { auth } from './firebase';
 import Post from './Post';
+import Modal from '@material-ui/core/Modal';
+import { Button, makeStyles,Input } from '@material-ui/core';
+import ImageUpload from './ImageUpload';
 
+
+
+function rand() {
+  return Math.round(Math.random() * 20) - 10;
+}
+
+function getModalStyle() {
+  const top = 50 + rand();
+  const left = 50 + rand();
+
+  return {
+    top: `${top}%`,
+    left: `${left}%`,
+    transform: `translate(-${top}%, -${left}%)`,
+  };
+}
+
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    position: 'absolute',
+    width: 400,
+    backgroundColor: theme.palette.background.paper,
+    border: '2px solid #000',
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing(2, 4, 3),
+  },
+}));
 
 function App() {
-  const [posts, setPosts] = useState([
-    { 
-      username:'Tahta',
-      caption:'Hahah',
-      imgUrl:'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/0a843e25-2d15-4be3-89b7-0988b20ba533/delkpgk-c5b6cd72-5807-4c57-ae8a-59ca73e4ef04.png/v1/fill/w_1192,h_670,q_70,strp/asia_woods_by_mumu0909_delkpgk-pre.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTA4MCIsInBhdGgiOiJcL2ZcLzBhODQzZTI1LTJkMTUtNGJlMy04OWI3LTA5ODhiMjBiYTUzM1wvZGVsa3Bnay1jNWI2Y2Q3Mi01ODA3LTRjNTctYWU4YS01OWNhNzNlNGVmMDQucG5nIiwid2lkdGgiOiI8PTE5MjAifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.DeGcgLbVTvGcdRCEX-Gy_L8v2uLGJvVIwb48vHJ3EFA'
-    },
-    { 
-      username:'Budi',
-       caption:'It New Post',
-      imgUrl:'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/0a843e25-2d15-4be3-89b7-0988b20ba533/delkpgk-c5b6cd72-5807-4c57-ae8a-59ca73e4ef04.png/v1/fill/w_1192,h_670,q_70,strp/asia_woods_by_mumu0909_delkpgk-pre.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTA4MCIsInBhdGgiOiJcL2ZcLzBhODQzZTI1LTJkMTUtNGJlMy04OWI3LTA5ODhiMjBiYTUzM1wvZGVsa3Bnay1jNWI2Y2Q3Mi01ODA3LTRjNTctYWU4YS01OWNhNzNlNGVmMDQucG5nIiwid2lkdGgiOiI8PTE5MjAifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.DeGcgLbVTvGcdRCEX-Gy_L8v2uLGJvVIwb48vHJ3EFA'
-    },
-    { 
-      username:'Siti',
-      caption:'Try new',
-      imgUrl:'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/0a843e25-2d15-4be3-89b7-0988b20ba533/delkpgk-c5b6cd72-5807-4c57-ae8a-59ca73e4ef04.png/v1/fill/w_1192,h_670,q_70,strp/asia_woods_by_mumu0909_delkpgk-pre.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTA4MCIsInBhdGgiOiJcL2ZcLzBhODQzZTI1LTJkMTUtNGJlMy04OWI3LTA5ODhiMjBiYTUzM1wvZGVsa3Bnay1jNWI2Y2Q3Mi01ODA3LTRjNTctYWU4YS01OWNhNzNlNGVmMDQucG5nIiwid2lkdGgiOiI8PTE5MjAifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.DeGcgLbVTvGcdRCEX-Gy_L8v2uLGJvVIwb48vHJ3EFA'
-    },
-  ])
+  const classes = useStyles();
+  const [posts, setPosts] = useState([])
+  const [modalStyle] = useState(getModalStyle);
+  const [open, setOpen] = useState(false);
+  const [openSignIn, setOpenSignIn] = useState('');
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [user, setUser] = useState(null);
+  
   useEffect(() => {
-   db.collection('post').onSnapshot()
+  const unsubscribe= auth.onAuthStateChanged(authUser=>{
+     if(authUser){
+      console.log(authUser)
+      setUser(authUser)
+      if(authUser.displayName){
+
+      }else{
+        return authUser.updateProfile({
+          displayName:username
+        })
+      }
+     }else{
+      console.log(authUser)
+     }
+   })
+   return()=>{
+    unsubscribe()
+   }
+  }, [user,username])
+
+  useEffect(() => {
+   db.collection('posts').onSnapshot(snap=>{
+    
+    setPosts(snap.docs.map(doc=>(
+      {
+        id:doc.id,
+        post:doc.data()
+      }
+    )))
+   })
   }, [])
+
+  
+  const signUp =(event)=>{
+    event.preventDefault()
+    auth.createUserWithEmailAndPassword(email,password)
+    .then((authUser)=>{
+      authUser.user.updateProfile({
+        displayName:username
+      })
+      
+    })
+    .catch((err)=>alert(err.message))
+    setOpen(false)
+  }
+
+  const signIn=(event)=>{
+    event.preventDefault()
+    auth.signInWithEmailAndPassword()
+    .catch((err)=>alert(err.message))
+    setOpenSignIn(false)
+  }
+
   return (
     <div className="app">
+
+        <ImageUpload/>
+        <Modal
+        open={open}
+        onClose={()=>setOpen(false)}
+        >
+          <div style={modalStyle} className={classes.paper}>
+          <form className="app__singup">
+            <center>
+              <img 
+                className='app_headerImage'
+                src="https://www.instagram.com/static/images/web/mobile_nav_type_logo.png/735145cfe0a4.png" alt="Instagram" />
+            </center>   
+                <Input
+                  placeholder='username'
+                  type='text'
+                  value={username}
+                  onChange={(e)=>setUsername(e.target.value)}
+                />
+                  
+                  <Input
+                  placeholder='email'
+                  type='text'
+                  value={email}
+                  onChange={(e)=>setEmail(e.target.value)}
+                />
+                  
+                  <Input
+                  placeholder='password'
+                  type='password'
+                  value={password}
+                  onChange={(e)=>setPassword(e.target.value)}
+                />
+            <Button type='submit' onClick={signUp}>Sing Up</Button>
+          </form>
+        </div>
+      </Modal>
+      <Modal
+        open={openSignIn}
+        onClose={()=>setOpenSignIn(false)}
+        >
+          <div style={modalStyle} className={classes.paper}>
+          <form className="app__singup">
+            <center>
+              <img 
+                className='app_headerImage'
+                src="https://www.instagram.com/static/images/web/mobile_nav_type_logo.png/735145cfe0a4.png" alt="Instagram" />
+            </center>   
+                  <Input
+                  placeholder='email'
+                  type='text'
+                  value={email}
+                  onChange={(e)=>setEmail(e.target.value)}
+                 />
+                  <Input
+                  placeholder='password'
+                  type='password'
+                  value={password}
+                  onChange={(e)=>setPassword(e.target.value)}
+                />
+            <Button type='submit' onClick={signIn}>Sing In</Button>
+          </form>
+        </div>
+      </Modal>
       <div className='app__header'>
       <img 
       className='app_headerImage'
       src="https://www.instagram.com/static/images/web/mobile_nav_type_logo.png/735145cfe0a4.png" alt="Instagram" />
       </div>
-       <h1>Tahta</h1>
-  
       {
-        posts.map(post=>(
+        user?(
+          <Button onClick={()=>auth.signOut()}>Logout</Button>
+        ):(
+          <div className="app_loginContainer">
+            <Button onClick={()=>setOpenSignIn(true)}>Sign In </Button>
+          <Button onClick={()=>setOpen(true)}>Sign Up </Button>
+          </div>
+         
+        )
+      }
+      
+      <h1>Tahta</h1>
+      {
+        posts.map(({id,post})=>(
           <Post
+            key={id}
             username={post.username}
             caption={post.caption}
             imgUrl={post.imgUrl}
