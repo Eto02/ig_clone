@@ -1,7 +1,10 @@
 import { Button } from '@material-ui/core'
 import React, { useState } from 'react'
+import db, { storage } from './firebase'
+import firebase from "firebase/compat/app"
+import "firebase/compat/firestore"
 
-function ImageUpload() {
+function ImageUpload({username}) {
     const [image, setImage] = useState(null)
     const [url, setUrl] = useState('')
     const [progress, setProgress] = useState('')
@@ -13,7 +16,37 @@ function ImageUpload() {
     }
     const handleUpload=(e)=>{
         e.preventDefault()
-       
+        const uploadTask= storage.ref(`images/${image.name}`).put(image)
+        uploadTask.on(
+            "state_changed",
+            (snap)=>{
+                const progress =Math.round(
+                    (snap.bytesTranferred/snap.totalBytes)*100
+                )
+                setProgress(progress)
+            },
+            (err)=>{
+                //erro func
+                console.log(err)
+                alert(err.message)
+            },
+            ()=>{
+                storage.ref('images')
+                .child(image.name)
+                .getDownloadURL()
+                .then(url=>{
+                    db.collection('posts').add({
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                        caption:caption,
+                        imgUrl:url,
+                        username:username
+                    })
+                    setProgress(0)
+                    setCaption('')
+                    setImage(null)
+                })
+            }
+        )
     }
     return (
         <div>

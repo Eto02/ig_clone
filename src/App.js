@@ -102,7 +102,14 @@ function App() {
   return (
     <div className="app">
 
-        <ImageUpload/>
+      {
+        user!=null?(
+          <ImageUpload
+          username={user.displayName}
+          />
+        ):null
+      }
+
         <Modal
         open={open}
         onClose={()=>setOpen(false)}

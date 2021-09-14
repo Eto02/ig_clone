@@ -1,7 +1,7 @@
 import firebase from "firebase/compat/app"
 import "firebase/compat/auth"
 import "firebase/compat/firestore"
-
+import "firebase/compat/storage"
 const firebaseConfig = {
   apiKey: "AIzaSyDfeAjA0Ey_oveR5RqaryvhT34Q38_ytDs",
   authDomain: "ig-clone-61d40.firebaseapp.com",
