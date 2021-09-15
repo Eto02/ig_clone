@@ -102,6 +102,9 @@ function App() {
     auth.signOut()
     setUser(null)
   }
+  const handleModal=(bool)=>{
+    setOpenPost(false)
+  }
 
   return (
     <div className="app">
@@ -178,6 +181,7 @@ function App() {
           {
             user?(
             <ImageUpload
+            closeModal={handleModal}
             username={username}
             />):null
           }
@@ -199,11 +203,13 @@ function App() {
         )
       }
       </div>
-      
+     
       <div className="app_posts">
-        <div className="app__postReel">
-        <Button onClick={()=>setOpenPost(true)}>POST</Button>
-        </div>
+     {
+       user?(   <div className="app__postReel">
+       <Button onClick={()=>setOpenPost(true)}>POST</Button>
+     </div>):null
+     }
       {
         posts.map(({id,post})=>(
           <Post

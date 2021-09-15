@@ -10,6 +10,9 @@ import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
 import NearMeOutlinedIcon from '@material-ui/icons/NearMeOutlined';
 import FavoriteOutlinedIcon from '@material-ui/icons/FavoriteOutlined';
+import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
+import { confirmAlert } from 'react-confirm-alert'; // Import
+import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 
 
 
@@ -17,6 +20,7 @@ function Post({postId, user, username, caption, imgUrl}) {
     const [comments, setComments] = useState([])
     const [likes, setLikes] = useState([])
     const [isLike, setIsLike] = useState(false)
+    const [isPost, setIsPost] = useState(false)
     const [idLike, setIdLike] = useState(null)
     const [comment, setComment] = useState('')
 
@@ -30,6 +34,12 @@ function Post({postId, user, username, caption, imgUrl}) {
             .orderBy('timestamp')
             .onSnapshot(snap=>{
                 setComments(snap.docs.map(doc=>doc.data()))
+                snap.docs.map(doc=>{
+                    if(doc.data().username==user){
+                        setIsPost(true)
+                       
+                    }
+                })
             })
             unsubscribe2= db.collection('posts')
             .doc(postId)
@@ -85,21 +95,59 @@ function Post({postId, user, username, caption, imgUrl}) {
         }
     
     }
+    const confirmDelete=(id)=>{
+        confirmAlert({
+            title: 'Hapus Post',
+            message: 'Apakah anda yakin?',
+            buttons: [
+              {
+                label: 'Yes',
+                onClick: () => {
+                    db.collection('posts')
+                    .doc(postId).delete().then(res=>{
+                        setIsLike(false)
+                        setIdLike(null)
+                    }).catch(err=>{
+                        alert(err)
+                    }
+                    )
+                }
+              },
+              {
+                label: 'No',
+                onClick: () => alert('Click No')
+              }
+            ]
+          });
+    }
+
     return (
         <div className='post'>
             <div className="post__header">
+                <div className="post__left">
                 <Avatar 
                 className='post__avatar'
                 alt='Tahta'
                 src='https://avataaars.io/?avatarStyle=Circle&topType=LongHairStraight&accessoriesType=Blank&hairColor=BrownDark&facialHairType=Blank&clotheType=BlazerShirt&eyeType=Default&eyebrowType=Default&mouthType=Default&skinColor=Light'
                 />
-                <h3>{username}</h3>
+                <h3>{username}</h3> 
+                </div>
+                <div className="post__right">
+                {
+                    username==user?(
+                        <IconButton onClick={confirmDelete}>
+                            <DeleteOutlineIcon/>
+                        </IconButton>
+                    ):null
+                }
+                </div>
+              
                 
             </div>
             <img className='post__image' src={imgUrl} alt="" />
             <div className="post__action">
                
-                 <IconButton onClick={handleLike}>
+                 <IconButton disabled={!user} onClick={handleLike}>
                         {
                             isLike?( <FavoriteOutlinedIcon className='post__liked'/>):( <FavoriteBorderIcon/>)
                         }   

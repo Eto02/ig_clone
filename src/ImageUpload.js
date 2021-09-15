@@ -4,7 +4,7 @@ import db, { storage } from './firebase'
 import firebase from "firebase/compat/app"
 import "firebase/compat/firestore"
 import './imageUpload.css'
-function ImageUpload({username}) {
+function ImageUpload({username,closeModal}) {
     const [image, setImage] = useState(null)
     const [url, setUrl] = useState('')
     const [progress, setProgress] = useState('')
@@ -47,14 +47,15 @@ function ImageUpload({username}) {
                 })
             }
         )
+        closeModal(true)
     }
     return (
         <div className='imageUpload'>
             <progress className='imageUpload__progress' value={progress} max="100"/>
             <br />
-            <Input type="text" placeholder='Enter a caption' onChange={event=>setCaption(event.target.value)} value={caption} />
+            <Input type="text" placeholder='Enter a caption' onChange={event=>setCaption(event.target.value)} value={caption} required/>
             <br />
-            <input className="imageUpload__file" type="file" name=""onChange={handleChange} />
+            <input className="imageUpload__file" type="file" name=""onChange={handleChange} required/>
             <br />
             <button className='imageUpload__button' onClick={handleUpload}>Upload</button>
         </div>
