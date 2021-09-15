@@ -3,10 +3,16 @@ import './App.css';
 import db, { auth } from './firebase';
 import Post from './Post';
 import Modal from '@material-ui/core/Modal';
-import { Button, makeStyles,Input } from '@material-ui/core';
+import { Button, makeStyles,Input, IconButton, Divider } from '@material-ui/core';
 import ImageUpload from './ImageUpload';
-
-
+import StoryReel from './StoryReel';
+import AddToPhotosIcon from '@material-ui/icons/AddToPhotos';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import AddIcon from '@material-ui/icons/Add';
+import ForumIcon from '@material-ui/icons/Forum';
+import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import SearchIcon from '@material-ui/icons/Search';
 
 function rand() {
   return Math.round(Math.random() * 20) - 10;
@@ -108,9 +114,6 @@ function App() {
 
   return (
     <div className="app">
-
-    
-
         <Modal
         open={open}
         onClose={()=>setOpen(false)}
@@ -142,7 +145,7 @@ function App() {
                   value={password}
                   onChange={(e)=>setPassword(e.target.value)}
                 />
-            <Button type='submit' onClick={signUp}>Sing Up</Button>
+            <Button type='submit' onClick={signUp}>Daftar</Button>
           </form>
         </div>
       </Modal>
@@ -169,7 +172,7 @@ function App() {
                   value={password}
                   onChange={(e)=>setPassword(e.target.value)}
                 />
-            <Button type='submit' onClick={signIn}>Sing In</Button>
+            <Button type='submit' onClick={signIn}>Masuk</Button>
           </form>
         </div>
       </Modal>
@@ -188,28 +191,62 @@ function App() {
         </div>
       </Modal>
       <div className='app__header'>
-      <img 
-      className='app_headerImage'
-      src="https://www.instagram.com/static/images/web/mobile_nav_type_logo.png/735145cfe0a4.png" alt="Instagram" />
-      {
-        user?(
-          <Button onClick={signOut}>Logout</Button>
-        ):(
-          <div className="app_loginContainer">
-            <Button onClick={()=>setOpenSignIn(true)}>Sign In </Button>
-             <Button onClick={()=>setOpen(true)}>Sign Up </Button>
+        <div className="app__headerLeft">
+            <img 
+          className='app_headerImage'
+          src="https://www.instagram.com/static/images/web/mobile_nav_type_logo.png/735145cfe0a4.png" alt="Instagram" />
+        </div>
+        <div className="app_headerCenter">
+                <div className="header_input">
+                    <SearchIcon/>
+                    <input type="text" name="" placeholder="Cari ...."/>
+                </div>
+        </div>
+          <div className="app__headerRight">
+          {
+           user?(   <div className="app__postReel">
+             <IconButton onClick={()=>setOpenPost(true)}>
+             <AddToPhotosIcon/ >
+             </IconButton>
+             <Divider orientation="vertical" flexItem />
+                <IconButton >
+                    <ForumIcon />
+                </IconButton>
+                <IconButton>
+                    <NotificationsActiveIcon/>
+                </IconButton>
+                <IconButton>
+                    <ExpandMoreIcon/>
+                </IconButton>
+           </div>):null
+        }
+             
+        {
+          user?(
+            <IconButton  onClick={signOut}>
+                  <ExitToAppIcon>Logout</ExitToAppIcon>
+            </IconButton>
+          
+          ):(
+            <div className="app_loginContainer">
+              <Button onClick={()=>setOpenSignIn(true)}>Masuk </Button>
+              <Button onClick={()=>setOpen(true)}>Sign Up </Button>
+            </div>
+          
+          )
+        }
           </div>
-         
-        )
-      }
+       
       </div>
+    
      
       <div className="app_posts">
-     {
-       user?(   <div className="app__postReel">
-       <Button onClick={()=>setOpenPost(true)}>POST</Button>
-     </div>):null
-     }
+        {
+          user?(  <StoryReel/>):(<img 
+            className='app_headerImage' 
+            src="https://www.instagram.com/static/images/web/mobile_nav_type_logo.png/735145cfe0a4.png" alt="Instagram" />)
+        }
+   
       {
         posts.map(({id,post})=>(
           <Post

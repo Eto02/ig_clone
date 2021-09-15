@@ -1,7 +1,8 @@
 *{ margin: 0px;}
 
 .app{
-  background-color: #fafafa;
+  background-color: #dfdfdf;
+  /* background-color: rgba(var(--b3f,250,250,250),1); */
   height: 100%;
 }
 .app_posts{
@@ -9,6 +10,30 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  
+}
+.app__headerLeft{
+  
+display: flex;
+}
+.app__headerCenter{
+  display: flex;
+}
+.header_input {
+  display: flex;
+  align-items: center;
+  background-color: #eff2f5;
+  padding: 10px;
+  margin-left: 10px;
+  border-radius: 999px;
+}
+.header_input > input {
+  border: none;
+  background-color: transparent;
+  outline-width: 0;
+}
+.app__headerRight{
+display: flex;
 }
 
 .app__header{
@@ -18,9 +43,10 @@
   background-color: white;
   padding: 20px;
   object-fit: contain;
-  bottom:  1px solid lightgray;
+  border:  1px solid lightgray;
   display: flex;
-  justify-content: space-between;
+  align-items: center;
+  justify-content: space-evenly;
 }
 .app__headerImage{
   object-fit: contain;
@@ -28,4 +54,7 @@
 .app__singup{
   display: flex;
   flex-direction: column;
+}
+.app__postReel{
+  display: flex;
 }
