@@ -1,0 +1,45 @@
+.imageUpload{
+    display: flex;
+    flex-direction: column;
+    width: 60%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-color: white;
+    border-top: 1px solid lightgray;
+}
+.imageUpload__progress{
+    width: 100%;
+}
+progress::-moz-progress-bar { background: rgb(85, 85, 214); }
+progress::-webkit-progress-value { background: blue; }
+progress { color: blue; border-radius: none;}
+
+
+.imageUpload__button {
+    border: 1px solid #801515;       
+    background-color: #801515;       
+    color: #FFFFFF;                  
+    font-size: 16px;                  
+    padding: 0.5em 1em 0.5em 1em;    
+}
+.imageUpload__button:hover {
+    opacity: 0.8;                     
+}
+.imageUpload__button:active {
+    background: #550000;             
+}
+.imageUpload__file {
+    border: 1px solid #801515;       
+    background-color: #801515;       
+    color: #FFFFFF;                  
+    font-size: 16px;                  
+    padding: 0.5em 1em 0.5em 1em;    
+}
+.imageUpload__file:hover {
+    opacity: 0.8;                     
+}
+.imageUpload__file:active {
+    background: #550000;             
+}

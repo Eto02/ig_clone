@@ -3,14 +3,20 @@
     max-width: 500px;
     border: 1px solid lightgray;
     margin-bottom: 24px ;
+    box-sizing: border-box;
+    width: 100%;
+    color: #262626;
 }
 .post__image{
     width: 100%;
     object-fit: contain;
+   
 }
 .post__text{
     font-weight: normal;
-    padding: 20px;
+    color: #262626;
+    padding-left: 20px;
+    margin-bottom: 8px;
 }
 .post__header{
     display: flex;
@@ -19,4 +25,56 @@
 }
 .post__avatar{
     margin-right: 10px;
+}
+.post__commentBox{
+    display: flex;
+    margin-top: 10px;
+    
+}
+.post__comment{
+    padding: 20px;
+    padding-top: 5px;
+} 
+.post__input{
+    flex: 1;
+    border: none;
+    padding: 10px;
+    border-top: 1px solid lightgray;
+}
+.post__button{
+    flex: 0;
+    border: none;
+    color: #6082a3;
+    background-color: transparent;
+    border-top: 1px solid lightgray;
+    cursor:pointer
+
+}
+.post__action{
+    display: flex;
+    align-items: flex-start;
+    justify-content: left;
+    padding-left: 20px;
+    padding-top: 5px;
+    margin-bottom: 8px;
+}
+
+.post__action> .MuiSvgIcon-root {
+padding-right: 10px;
+}
+.post__action> .MuiButtonBase-root {
+    padding-right: 10px;
+    padding:0px;
+    margin-right: 10px;
+}
+.post__komentar{
+    padding-left: 20px;
+    color: #8e8e8e;
+}
+.post__likes{
+    padding-left: 20px;
+    color: #262626;
+}
+.post__liked{
+    color:red
 }

@@ -2,14 +2,28 @@
 
 .app{
   background-color: #fafafa;
-  height: 100vh;
+  height: 100%;
+}
+.app_posts{
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .app__header{
+  position: sticky;
+  top: 0;
+  z-index: 1;
   background-color: white;
   padding: 20px;
   object-fit: contain;
   bottom:  1px solid lightgray;
+  display: flex;
+  justify-content: space-between;
+}
+.app__headerImage{
+  object-fit: contain;
 }
 .app__singup{
   display: flex;

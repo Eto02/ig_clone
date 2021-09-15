@@ -1,9 +1,9 @@
-import { Button } from '@material-ui/core'
+import { Button, Input } from '@material-ui/core'
 import React, { useState } from 'react'
 import db, { storage } from './firebase'
 import firebase from "firebase/compat/app"
 import "firebase/compat/firestore"
-
+import './imageUpload.css'
 function ImageUpload({username}) {
     const [image, setImage] = useState(null)
     const [url, setUrl] = useState('')
@@ -20,10 +20,10 @@ function ImageUpload({username}) {
         uploadTask.on(
             "state_changed",
             (snap)=>{
-                const progress =Math.round(
-                    (snap.bytesTranferred/snap.totalBytes)*100
+                const progres =Math.round(
+                    (snap.bytesTransferred/snap.totalBytes)*100
                 )
-                setProgress(progress)
+                setProgress(progres)
             },
             (err)=>{
                 //erro func
@@ -49,10 +49,14 @@ function ImageUpload({username}) {
         )
     }
     return (
-        <div>
-            <input type="text" placeholder='Enter a caption' onChange={event=>setCaption(event.target.value)} value={caption} />
-            <input type="file" name=""onChange={handleChange} />
-            <Button  onClick={handleUpload}>Upload</Button>
+        <div className='imageUpload'>
+            <progress className='imageUpload__progress' value={progress} max="100"/>
+            <br />
+            <Input type="text" placeholder='Enter a caption' onChange={event=>setCaption(event.target.value)} value={caption} />
+            <br />
+            <input className="imageUpload__file" type="file" name=""onChange={handleChange} />
+            <br />
+            <button className='imageUpload__button' onClick={handleUpload}>Upload</button>
         </div>
     )
 }

@@ -39,7 +39,8 @@ function App() {
   const [posts, setPosts] = useState([])
   const [modalStyle] = useState(getModalStyle);
   const [open, setOpen] = useState(false);
-  const [openSignIn, setOpenSignIn] = useState('');
+  const [openSignIn, setOpenSignIn] = useState(false);
+  const [opnePost, setOpenPost] = useState(false);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -48,31 +49,30 @@ function App() {
   useEffect(() => {
   const unsubscribe= auth.onAuthStateChanged(authUser=>{
      if(authUser){
-      console.log(authUser)
-      setUser(authUser)
       if(authUser.displayName){
-
+        setUsername(authUser.displayName)
       }else{
         return authUser.updateProfile({
           displayName:username
         })
       }
+      setUser(authUser)
      }else{
-      console.log(authUser)
+      
      }
    })
    return()=>{
     unsubscribe()
    }
   }, [user,username])
-
+  console.log(username)
   useEffect(() => {
-   db.collection('posts').onSnapshot(snap=>{
-    
+   db.collection('posts').orderBy('timestamp','desc').onSnapshot(snap=>{
     setPosts(snap.docs.map(doc=>(
       {
         id:doc.id,
         post:doc.data()
+        
       }
     )))
    })
@@ -83,32 +83,30 @@ function App() {
     event.preventDefault()
     auth.createUserWithEmailAndPassword(email,password)
     .then((authUser)=>{
-      authUser.user.updateProfile({
+      setUser(authUser.user)
+     return authUser.user.updateProfile({
         displayName:username
       })
-      
     })
     .catch((err)=>alert(err.message))
     setOpen(false)
   }
-
+  
   const signIn=(event)=>{
     event.preventDefault()
-    auth.signInWithEmailAndPassword()
+    auth.signInWithEmailAndPassword(email,password)
     .catch((err)=>alert(err.message))
     setOpenSignIn(false)
+  }
+  const signOut=()=>{
+    auth.signOut()
+    setUser(null)
   }
 
   return (
     <div className="app">
 
-      {
-        user!=null?(
-          <ImageUpload
-          username={user.displayName}
-          />
-        ):null
-      }
+    
 
         <Modal
         open={open}
@@ -172,34 +170,56 @@ function App() {
           </form>
         </div>
       </Modal>
+      <Modal
+        open={opnePost}
+        onClose={()=>setOpenPost(false)}
+        >
+          <div style={modalStyle} className={classes.paper}>
+          {
+            user?(
+            <ImageUpload
+            username={username}
+            />):null
+          }
+        </div>
+      </Modal>
       <div className='app__header'>
       <img 
       className='app_headerImage'
       src="https://www.instagram.com/static/images/web/mobile_nav_type_logo.png/735145cfe0a4.png" alt="Instagram" />
-      </div>
       {
         user?(
-          <Button onClick={()=>auth.signOut()}>Logout</Button>
+          <Button onClick={signOut}>Logout</Button>
         ):(
           <div className="app_loginContainer">
             <Button onClick={()=>setOpenSignIn(true)}>Sign In </Button>
-          <Button onClick={()=>setOpen(true)}>Sign Up </Button>
+             <Button onClick={()=>setOpen(true)}>Sign Up </Button>
           </div>
          
         )
       }
+      </div>
       
-      <h1>Tahta</h1>
+      <div className="app_posts">
+        <div className="app__postReel">
+        <Button onClick={()=>setOpenPost(true)}>POST</Button>
+        </div>
       {
         posts.map(({id,post})=>(
           <Post
             key={id}
+            postId={id}
+            user={username}
             username={post.username}
             caption={post.caption}
             imgUrl={post.imgUrl}
           />
         ))
       }
+      </div>
+      
+     
+     
        
      
       
